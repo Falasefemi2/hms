@@ -13,17 +13,26 @@ import (
 	"github.com/falasefemi2/hms/internal/server"
 )
 
-// @title HMS API
-// @version 1.0
-// @description Hospital Management System API
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+// @title Hospital Management System API
+// @version 1.0.0
+// @description A comprehensive Hospital Management System with user authentication, doctor management, and patient care features
+// @termsOfService http://example.com/terms/
+
+// @contact.name HMS Support
+// @contact.url http://example.com/support
+// @contact.email support@hms.example.com
+
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
 // @host localhost:8080
 // @BasePath /
+// @schemes http https
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token. Example: "Bearer eyJhbGciOiJIUzI1NiIs..."
 func main() {
 	// Load config
 	cfg := config.LoadConfig()
