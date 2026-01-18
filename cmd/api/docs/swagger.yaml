@@ -1,0 +1,27 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: support@hms.example.com
+    name: HMS Support
+    url: http://example.com/support
+  description: A comprehensive Hospital Management System with user authentication,
+    doctor management, and patient care features
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://example.com/terms/
+  title: Hospital Management System API
+  version: 1.0.0
+paths: {}
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      eyJhbGciOiJIUzI1NiIs..."'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

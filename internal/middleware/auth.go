@@ -43,3 +43,91 @@ func AdminOnly(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func DoctorOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		roleValue := r.Context().Value(utils.RoleKey)
+		role, ok := roleValue.(string)
+
+		if !ok || role != "DOCTOR" {
+			utils.WriteError(w, http.StatusForbidden, "doctor access required")
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func NurseOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		roleValue := r.Context().Value(utils.RoleKey)
+		role, ok := roleValue.(string)
+
+		if !ok || role != "NURSE" {
+			utils.WriteError(w, http.StatusForbidden, "nurse access required")
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func PatientOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		roleValue := r.Context().Value(utils.RoleKey)
+		role, ok := roleValue.(string)
+
+		if !ok || role != "PATIENT" {
+			utils.WriteError(w, http.StatusForbidden, "patient access required")
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func HasAnyRole(allowedRoles ...string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			roleValue := r.Context().Value(utils.RoleKey)
+			role, ok := roleValue.(string)
+
+			if !ok {
+				utils.WriteError(w, http.StatusForbidden, "user role not found in context")
+				return
+			}
+
+			// Check if user's role is in allowed roles
+			allowed := false
+			for _, allowedRole := range allowedRoles {
+				if role == allowedRole {
+					allowed = true
+					break
+				}
+			}
+
+			if !allowed {
+				utils.WriteError(w, http.StatusForbidden, "insufficient permissions")
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+func GetUserIDFromContext(ctx context.Context) string {
+	userID, ok := ctx.Value(utils.UserIDKey).(string)
+	if !ok {
+		return ""
+	}
+	return userID
+}
+
+func GetRoleFromContext(ctx context.Context) string {
+	role, ok := ctx.Value(utils.RoleKey).(string)
+	if !ok {
+		return ""
+	}
+	return role
+}
