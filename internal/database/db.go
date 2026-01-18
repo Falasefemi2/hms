@@ -1,45 +1,52 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type DB struct {
-	conn *sql.DB
+	pool *pgxpool.Pool
 }
 
 func NewDB(databaseURL string) (*DB, error) {
-	conn, err := sql.Open("postgres", databaseURL)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	pool, err := pgxpool.New(ctx, databaseURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database: %w", err)
+		return nil, fmt.Errorf("failed to create pgx pool: %w", err)
 	}
 
-	err = conn.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	// verify connection
+	if err := pool.Ping(ctx); err != nil {
+		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	log.Println("Database connection succssfully")
+	log.Println("Database connection established successfully")
 
-	return &DB{conn: conn}, nil
+	return &DB{pool: pool}, nil
 }
 
-func (db *DB) Close() error {
-	if db.conn != nil {
-		return db.conn.Close()
-	}
-	return nil
+func (db *DB) Pool() *pgxpool.Pool {
+	return db.pool
 }
 
-func (db *DB) HealthCheck() error {
-	return db.conn.Ping()
+func (db *DB) Close() {
+	db.pool.Close()
 }
 
-func (db *DB) InitializeSchema() error {
+func (db *DB) HealthCheck(ctx context.Context) error {
+	return db.pool.Ping(ctx)
+}
+
+func (db *DB) InitializeSchema(ctx context.Context) error {
 	log.Println("Reading schema.sql file...")
 
 	schemaSQL, err := readSchemaFile()
@@ -47,31 +54,25 @@ func (db *DB) InitializeSchema() error {
 		return fmt.Errorf("failed to read schema.sql: %w", err)
 	}
 
-	log.Println("Initializing database schema...")
-
 	statements := parseSQLStatements(schemaSQL)
 
-	log.Printf("Found %d SQL statements to execute\n", len(statements))
 	for i, stmt := range statements {
 		if strings.TrimSpace(stmt) == "" {
-			continue // Skip empty statements
+			continue
 		}
 
-		log.Printf("Executing statement %d/%d...", i+1, len(statements))
-
-		_, err := db.conn.Exec(stmt)
+		_, err := db.pool.Exec(ctx, stmt)
 		if err != nil {
-			return fmt.Errorf("failed to execute statement %d: %w\nStatement: %s", i+1, err, stmt)
+			return fmt.Errorf(
+				"failed to execute statement %d: %w\nStatement: %s",
+				i+1,
+				err,
+				stmt,
+			)
 		}
 	}
 
-	log.Println("Database schema initialized successfully!")
-
-	// Seed the admin user
-	if err := db.SeedAdminUser(); err != nil {
-		return fmt.Errorf("failed to seed admin user: %w", err)
-	}
-
+	log.Println("Database schema initialized successfully")
 	return nil
 }
 

@@ -82,7 +82,7 @@ func (ur *UserRepository) Create(ctx context.Context, user *models.User) (*model
 	return &created, nil
 }
 
-func (ur *UserRepository) GetByID(ctx context.Context, userID int64) (*models.User, error) {
+func (ur *UserRepository) GetByID(ctx context.Context, userID string) (*models.User, error) {
 	query := `
 		SELECT
 			user_id,
@@ -240,6 +240,7 @@ func (ur *UserRepository) Delete(ctx context.Context, userID int64) error {
 func (ur *UserRepository) List(ctx context.Context, limit, offset int) ([]*models.User, error) {
 	query := `
 		SELECT
+			user_id,
 			username,
 			email,
 			password_hash,
