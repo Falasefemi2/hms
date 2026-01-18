@@ -66,6 +66,12 @@ func (db *DB) InitializeSchema() error {
 	}
 
 	log.Println("Database schema initialized successfully!")
+
+	// Seed the admin user
+	if err := db.SeedAdminUser(); err != nil {
+		return fmt.Errorf("failed to seed admin user: %w", err)
+	}
+
 	return nil
 }
 

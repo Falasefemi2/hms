@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/falasefemi2/hms/internal/config"
 	"github.com/falasefemi2/hms/internal/database"
+	"github.com/falasefemi2/hms/internal/server"
 	_ "github.com/lib/pq"
 )
 
@@ -31,5 +33,11 @@ func main() {
 	}
 
 	log.Println("All tables created!")
-	log.Println("Application ready!")
+
+	// Start the server
+	srv := server.NewServer(db)
+	err = srv.Start(fmt.Sprintf("%d", cfg.ServerPort))
+	if err != nil {
+		log.Fatalf("Server error: %v", err)
+	}
 }
