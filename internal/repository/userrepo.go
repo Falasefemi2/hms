@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -313,4 +314,16 @@ func (ur *UserRepository) ExistsByEmail(ctx context.Context, email string) (bool
 	}
 
 	return exists, nil
+}
+
+func (ur *UserRepository) Count(ctx context.Context) (int64, error) {
+	query := `SELECT COUNT(*) FROM users`
+
+	var total int64
+	err := ur.pool.QueryRow(ctx, query).Scan(&total)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count users: %w", err)
+	}
+
+	return total, nil
 }

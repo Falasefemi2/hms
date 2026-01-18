@@ -50,3 +50,11 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type PaginatedUserResponse struct {
+	Data       []UserResponse `json:"data"`
+	Limit      int            `json:"limit"`
+	Offset     int            `json:"offset"`
+	TotalCount int64          `json:"total_count"`
+	TotalPages int            `json:"total_pages"`
+}

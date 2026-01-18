@@ -44,13 +44,6 @@ const docTemplate = `{
                 "summary": "List all users with pagination (Admin only)",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Bearer \u003ctoken\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "type": "integer",
                         "default": 10,
                         "description": "Number of users per page (default: 10, max: 100)",
@@ -73,6 +66,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/dto.UserResponse"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid pagination parameters",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
@@ -113,13 +112,6 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new user (Admin only)",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003ctoken\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "User creation details with role",
                         "name": "request",
@@ -183,13 +175,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get user by ID (Admin only)",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003ctoken\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "User ID (UUID format)",
