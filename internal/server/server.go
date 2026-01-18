@@ -48,6 +48,7 @@ func (s *Server) Start(port string) error {
 
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/signup", userHandler.SignUpPatient)
+		r.Post("/login", userHandler.Login)
 	})
 
 	r.Route("/admin", func(r chi.Router) {

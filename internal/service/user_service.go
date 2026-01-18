@@ -289,3 +289,21 @@ func isValidEmail(email string) bool {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
 }
+
+func (us *UserService) Login(ctx context.Context, email, password string) (string, error) {
+	user, err := us.repo.GetByEmail(ctx, email)
+	if err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	if !utils.ComparePassword(user.PasswordHash, password) {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := utils.GenerateJwt(user)
+	if err != nil {
+		return "", errors.New("failed to generate token")
+	}
+
+	return token, nil
+}

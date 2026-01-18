@@ -212,3 +212,31 @@ func (u *UserHandler) userToResponse(user *models.User) *dto.UserResponse {
 		CreatedAt: user.CreatedAt,
 	}
 }
+
+// Login godoc
+// @Summary User login
+// @Description Authenticate a user and receive a JWT token.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body dto.LoginRequest true "Login credentials"
+// @Success 200 {object} dto.LoginResponse "Login successful, token returned"
+// @Failure 400 {object} dto.ErrorResponse "Validation error - invalid input format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized - invalid credentials"
+// @Router /auth/login [post]
+func (u *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var req dto.LoginRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	token, err := u.userService.Login(r.Context(), req.Email, req.Password)
+	if err != nil {
+		utils.WriteError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, dto.LoginResponse{Token: token})
+}
