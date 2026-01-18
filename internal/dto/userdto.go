@@ -41,3 +41,20 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 	Code  string `json:"code,omitempty"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+}
+
+type PaginatedUserResponse struct {
+	Data       []UserResponse `json:"data"`
+	Limit      int            `json:"limit"`
+	Offset     int            `json:"offset"`
+	TotalCount int64          `json:"total_count"`
+	TotalPages int            `json:"total_pages"`
+}

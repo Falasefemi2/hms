@@ -175,7 +175,7 @@ func (us *UserService) DeleteUser(ctx context.Context, userID int64) error {
 	return nil
 }
 
-func (us *UserService) ListUsers(ctx context.Context, limit, offset int) ([]*models.User, error) {
+func (us *UserService) ListUsers(ctx context.Context, limit, offset int) ([]*models.User, int64, error) {
 	if limit <= 0 || limit > 100 {
 		limit = 10
 	}
@@ -185,10 +185,15 @@ func (us *UserService) ListUsers(ctx context.Context, limit, offset int) ([]*mod
 
 	users, err := us.repo.List(ctx, limit, offset)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list users: %w", err)
+		return nil, 0, fmt.Errorf("failed to list users: %w", err)
 	}
 
-	return users, nil
+	total, err := us.repo.Count(ctx)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count users: %w", err)
+	}
+
+	return users, total, nil
 }
 
 func validatePatientInput(username, email, password, firstName, lastName string) error {
@@ -288,4 +293,22 @@ func isValidEmail(email string) bool {
 	// Simple email validation regex
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
+}
+
+func (us *UserService) Login(ctx context.Context, email, password string) (string, error) {
+	user, err := us.repo.GetByEmail(ctx, email)
+	if err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	if !utils.ComparePassword(user.PasswordHash, password) {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := utils.GenerateJwt(user)
+	if err != nil {
+		return "", errors.New("failed to generate token")
+	}
+
+	return token, nil
 }

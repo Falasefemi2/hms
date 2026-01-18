@@ -3,7 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/falasefemi2/hms/internal/dto"
 	"github.com/falasefemi2/hms/internal/models"
@@ -78,7 +81,6 @@ func (u *UserHandler) SignUpPatient(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param Authorization header string true "Bearer <token>"
 // @Param request body dto.AdminCreateUserRequest true "User creation details with role"
 // @Success 201 {object} dto.UserResponse "User created successfully"
 // @Failure 400 {object} dto.ErrorResponse "Validation error - invalid input or invalid role"
@@ -140,7 +142,6 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param Authorization header string true "Bearer <token>"
 // @Param id path string true "User ID (UUID format)"
 // @Success 200 {object} dto.UserResponse "User details retrieved successfully"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized - invalid JWT token"
@@ -148,7 +149,7 @@ func (u *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} dto.ErrorResponse "Not found - user does not exist"
 // @Router /admin/users/{id} [get]
 func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	userID := r.URL.Query().Get("id")
+	userID := chi.URLParam(r, "id")
 	if userID == "" {
 		utils.WriteError(w, http.StatusBadRequest, "userID required")
 		return
@@ -170,28 +171,53 @@ func (u *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param Authorization header string true "Bearer <token>"
 // @Param limit query int false "Number of users per page (default: 10, max: 100)" default(10)
 // @Param offset query int false "Number of users to skip for pagination (default: 0)" default(0)
 // @Success 200 {array} dto.UserResponse "List of users retrieved successfully"
 // @Failure 401 {object} dto.ErrorResponse "Unauthorized - invalid JWT token"
 // @Failure 403 {object} dto.ErrorResponse "Forbidden - admin role required"
+// @Failure 400 {object} dto.ErrorResponse "Invalid pagination parameters"
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /admin/users [get]
 func (u *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
-	limit := 10
-	offset := 0
+	const (
+		defaultLimit  = 10
+		maxLimit      = 100
+		defaultOffset = 0
+	)
+	limitStr := chi.URLParam(r, "limit")
+	limit := defaultLimit
 
-	if l := r.URL.Query().Get("limit"); l != "" {
-		// TODO LATER
+	if limitStr != "" {
+		var err error
+		limit, err := strconv.Atoi(limitStr)
+		if err != nil || limit < 1 {
+			utils.WriteError(w, http.StatusBadRequest, "limit must be a positive integer")
+			return
+		}
+		if limit > maxLimit {
+			limit = maxLimit
+		}
 	}
-	users, err := u.userService.ListUsers(r.Context(), limit, offset)
+
+	offsetStr := chi.URLParam(r, "offset")
+	offset := defaultOffset
+	if offsetStr != "" {
+		var err error
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil || offset < 0 {
+			utils.WriteError(w, http.StatusBadRequest, "offset must be a non-negative integer")
+			return
+		}
+	}
+
+	users, totalCount, err := u.userService.ListUsers(r.Context(), limit, offset)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, "failed to retrieve users")
 		return
 	}
 
-	responses := make([]dto.UserResponse, len(users))
+	responses := make([]dto.UserResponse, totalCount)
 	for i, user := range users {
 		responses[i] = *u.userToResponse(user)
 	}
@@ -211,4 +237,32 @@ func (u *UserHandler) userToResponse(user *models.User) *dto.UserResponse {
 		IsActive:  user.IsActive,
 		CreatedAt: user.CreatedAt,
 	}
+}
+
+// Login godoc
+// @Summary User login
+// @Description Authenticate a user and receive a JWT token.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body dto.LoginRequest true "Login credentials"
+// @Success 200 {object} dto.LoginResponse "Login successful, token returned"
+// @Failure 400 {object} dto.ErrorResponse "Validation error - invalid input format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized - invalid credentials"
+// @Router /auth/login [post]
+func (u *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var req dto.LoginRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	token, err := u.userService.Login(r.Context(), req.Email, req.Password)
+	if err != nil {
+		utils.WriteError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, dto.LoginResponse{Token: token})
 }
