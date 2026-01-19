@@ -139,7 +139,7 @@ func (dept *DepartmentRepository) GetAll(ctx context.Context, pagination Paginat
 	countQuery := `
 	SELECT COUNT(*)
 	FROM departments
-	WHEERE is_active = true
+	WHERE is_active = true
 	`
 
 	var totalCount int
