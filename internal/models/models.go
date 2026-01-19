@@ -19,3 +19,12 @@ type User struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
+
+type Department struct {
+	ID          uuid.UUID
+	Name        string
+	Description string
+	IsActive    bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
