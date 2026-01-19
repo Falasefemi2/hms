@@ -37,8 +37,13 @@ func (s *Server) Start(port string) error {
 	r.Use(chimw.Recoverer)
 
 	userRepo := repository.NewUserRepository(s.db.Pool())
+	deptRepo := repository.NewDepartmentRepository(s.db.Pool())
+
 	userService := service.NewUserService(userRepo)
+	deptService := service.NewDepartmentService(deptRepo)
+
 	userHandler := handlers.NewUserHandler(userService)
+	deptHandler := handlers.NewDeptHandler(deptService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -59,6 +64,14 @@ func (s *Server) Start(port string) error {
 			r.Post("/", userHandler.CreateUser)
 			r.Get("/", userHandler.ListUsers)
 			r.Get("/{id}", userHandler.GetUser)
+		})
+
+		r.Route("/departments", func(r chi.Router) {
+			r.Post("/", deptHandler.CreateDepartment)
+			r.Get("/", deptHandler.GetAllDepartments)
+			r.Get("/{id}", deptHandler.GetDepartment)
+			r.Put("/{id}", deptHandler.UpdateDepartment)
+			r.Delete("/{id}", deptHandler.DeleteDepartment)
 		})
 	})
 

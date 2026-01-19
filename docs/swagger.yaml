@@ -34,6 +34,48 @@ definitions:
     - role
     - username
     type: object
+  dto.CreateDepartmentRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  dto.DepartmentListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.DepartmentResponse'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  dto.DepartmentResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -89,6 +131,18 @@ definitions:
     - password
     - username
     type: object
+  dto.UpdateDepartmentRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+    type: object
   dto.UserResponse:
     properties:
       created_at:
@@ -125,6 +179,210 @@ info:
   title: Hospital Management System API
   version: 1.0.0
 paths:
+  /admin/departments:
+    get:
+      description: Retrieves all active departments with pagination support
+      parameters:
+      - default: 1
+        description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Departments retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.DepartmentListResponse'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - Bearer: []
+      summary: List all departments
+      tags:
+      - departments
+    post:
+      consumes:
+      - application/json
+      description: Creates a new department with the provided name and description
+      parameters:
+      - description: Department details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Department created successfully
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Invalid request or validation error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - Bearer: []
+      summary: Create a new department
+      tags:
+      - departments
+  /admin/departments/{id}:
+    delete:
+      description: Soft deletes a department by setting is_active to false
+      parameters:
+      - description: Department ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Department deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request or department already deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Department not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - Bearer: []
+      summary: Delete a department
+      tags:
+      - departments
+    get:
+      description: Retrieves a single department by its ID
+      parameters:
+      - description: Department ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Department retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Invalid department ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Department not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - Bearer: []
+      summary: Get a department by ID
+      tags:
+      - departments
+    put:
+      consumes:
+      - application/json
+      description: Updates one or more fields of an existing department. Only provided
+        fields will be updated.
+      parameters:
+      - description: Department ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Fields to update (all optional)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateDepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Department updated successfully
+          schema:
+            $ref: '#/definitions/dto.DepartmentResponse'
+        "400":
+          description: Invalid request or validation error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Department not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - Bearer: []
+      summary: Update a department
+      tags:
+      - departments
   /admin/users:
     get:
       consumes:
