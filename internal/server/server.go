@@ -39,14 +39,20 @@ func (s *Server) Start(port string) error {
 	userRepo := repository.NewUserRepository(s.db.Pool())
 	deptRepo := repository.NewDepartmentRepository(s.db.Pool())
 	doctorRepo := repository.NewDoctorRepository(s.db.Pool())
+	nurseRepo := repository.NewNurseRepository(s.db.Pool())
+	patientRepo := repository.NewPatientRepository(s.db.Pool())
 
 	userService := service.NewUserService(userRepo)
 	deptService := service.NewDepartmentService(deptRepo)
 	doctorService := service.NewDoctorService(doctorRepo, userRepo)
+	nurseService := service.NewNurseService(nurseRepo, userRepo)
+	patientService := service.NewPatientService(patientRepo, userRepo)
 
 	userHandler := handlers.NewUserHandler(userService)
 	deptHandler := handlers.NewDeptHandler(deptService)
 	doctorHandler := handlers.NewDoctorHandler(doctorService)
+	nurseHandler := handlers.NewNurseHandler(nurseService)
+	patientHandler := handlers.NewPatientHandlers(patientService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -76,9 +82,21 @@ func (s *Server) Start(port string) error {
 			r.Put("/{id}", deptHandler.UpdateDepartment)
 			r.Delete("/{id}", deptHandler.DeleteDepartment)
 		})
-		
+
 		r.Route("/doctors", func(r chi.Router) {
 			r.Post("/", doctorHandler.CreateDoctor)
+		})
+
+		r.Route("/nurses", func(r chi.Router) {
+			r.Post("/", nurseHandler.CreateNurse)
+		})
+	})
+
+	r.Route("/patients", func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Use(middleware.PatientOnly)
+		r.Route("/patientprofile", func(r chi.Router) {
+			r.Post("/", patientHandler.PatientProfile)
 		})
 	})
 

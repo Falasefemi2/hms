@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS users (    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -168,7 +169,6 @@ CREATE TABLE IF NOT EXISTS hospital_config (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
@@ -188,4 +188,3 @@ CREATE INDEX IF NOT EXISTS idx_lab_tests_status ON lab_tests(status);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_resource ON audit_logs(resource_type, resource_id);
-
