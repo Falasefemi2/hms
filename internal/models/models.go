@@ -28,3 +28,15 @@ type Department struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
+
+type Doctor struct {
+	DocotrID        uuid.UUID
+	UserID          uuid.UUID
+	Specialization  string
+	LicenseNumber   string
+	DepartmentID    uuid.UUID
+	ConsultationFee float64
+	IsAvailable     bool
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+}

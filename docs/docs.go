@@ -347,6 +347,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/doctors": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new doctor. Requires valid JWT token with ADMIN role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Doctor Management"
+                ],
+                "summary": "Create a new doctor",
+                "parameters": [
+                    {
+                        "description": "Doctor creation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DoctorSignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Doctor created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DoctorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - invalid input or invalid role",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - doctor already exists for this user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -756,6 +819,65 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DoctorResponse": {
+            "type": "object",
+            "properties": {
+                "consultation_fee": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department_id": {
+                    "type": "string"
+                },
+                "doctor_id": {
+                    "type": "string"
+                },
+                "is_available": {
+                    "type": "boolean"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "specialization": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DoctorSignUpRequest": {
+            "type": "object",
+            "required": [
+                "consultation_fee",
+                "department_id",
+                "license_number",
+                "specialization",
+                "user_id"
+            ],
+            "properties": {
+                "consultation_fee": {
+                    "type": "number"
+                },
+                "department_id": {
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "specialization": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
