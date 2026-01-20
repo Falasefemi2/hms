@@ -40,3 +40,13 @@ type Doctor struct {
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
+
+type Nurse struct {
+	NurseID       uuid.UUID
+	UserID        uuid.UUID
+	DepartmentID  uuid.UUID
+	Shift         string
+	LicenseNumber string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}

@@ -138,6 +138,39 @@ definitions:
       token:
         type: string
     type: object
+  dto.NurseResponse:
+    properties:
+      created_at:
+        type: string
+      department_id:
+        type: string
+      license_number:
+        type: string
+      nurse_id:
+        type: string
+      shift:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.NurseSignupRequest:
+    properties:
+      department_id:
+        type: string
+      license_number:
+        type: string
+      shift:
+        type: string
+      user_id:
+        type: string
+    required:
+    - department_id
+    - license_number
+    - shift
+    - user_id
+    type: object
   dto.PatientSignUpRequest:
     properties:
       email:
@@ -463,6 +496,46 @@ paths:
       summary: Create a new doctor
       tags:
       - Doctor Management
+  /admin/nurses:
+    post:
+      consumes:
+      - application/json
+      description: Create a new nurse. Requires valid JWT token with ADMIN role
+      parameters:
+      - description: Nurse creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NurseSignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Nurse created successfully
+          schema:
+            $ref: '#/definitions/dto.NurseResponse'
+        "400":
+          description: Validation error - invalid input or invalid role
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict - nurse already exists for this user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new nurse
+      tags:
+      - Nurse Management
   /admin/users:
     get:
       consumes:

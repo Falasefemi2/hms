@@ -410,6 +410,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/nurses": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new nurse. Requires valid JWT token with ADMIN role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Nurse Management"
+                ],
+                "summary": "Create a new nurse",
+                "parameters": [
+                    {
+                        "description": "Nurse creation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NurseSignupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Nurse created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.NurseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - invalid input or invalid role",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - nurse already exists for this user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -912,6 +975,55 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NurseResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "department_id": {
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "nurse_id": {
+                    "type": "string"
+                },
+                "shift": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NurseSignupRequest": {
+            "type": "object",
+            "required": [
+                "department_id",
+                "license_number",
+                "shift",
+                "user_id"
+            ],
+            "properties": {
+                "department_id": {
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "shift": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
