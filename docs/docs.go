@@ -775,6 +775,69 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/patients/patientprofile": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create patient profile. Requires valid JWT token with PATIENT role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Patient Management"
+                ],
+                "summary": "Create patient profile",
+                "parameters": [
+                    {
+                        "description": "Patient Profile details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PatientSignUp"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Patient Profile created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PatientResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - invalid input or invalid role",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - patient role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - patient already exists for this user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1021,6 +1084,67 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shift": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PatientResponse": {
+            "type": "object",
+            "properties": {
+                "blood_group": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "emergency_contact_name": {
+                    "type": "string"
+                },
+                "emergency_contact_phone": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "medical_history": {
+                    "type": "string"
+                },
+                "patient_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PatientSignUp": {
+            "type": "object",
+            "properties": {
+                "blood_group": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "emergency_contact_name": {
+                    "type": "string"
+                },
+                "emergency_contact_phone": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "medical_history": {
                     "type": "string"
                 },
                 "user_id": {

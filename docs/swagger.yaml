@@ -171,6 +171,46 @@ definitions:
     - shift
     - user_id
     type: object
+  dto.PatientResponse:
+    properties:
+      blood_group:
+        type: string
+      created_at:
+        type: string
+      date_of_birth:
+        type: string
+      emergency_contact_name:
+        type: string
+      emergency_contact_phone:
+        type: string
+      gender:
+        type: string
+      medical_history:
+        type: string
+      patient_id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.PatientSignUp:
+    properties:
+      blood_group:
+        type: string
+      date_of_birth:
+        type: string
+      emergency_contact_name:
+        type: string
+      emergency_contact_phone:
+        type: string
+      gender:
+        type: string
+      medical_history:
+        type: string
+      user_id:
+        type: string
+    type: object
   dto.PatientSignUpRequest:
     properties:
       email:
@@ -734,6 +774,46 @@ paths:
       summary: Show the status of server.
       tags:
       - root
+  /patients/patientprofile:
+    post:
+      consumes:
+      - application/json
+      description: Create patient profile. Requires valid JWT token with PATIENT role
+      parameters:
+      - description: Patient Profile details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PatientSignUp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Patient Profile created successfully
+          schema:
+            $ref: '#/definitions/dto.PatientResponse'
+        "400":
+          description: Validation error - invalid input or invalid role
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - patient role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict - patient already exists for this user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create patient profile
+      tags:
+      - Patient Management
 schemes:
 - http
 - https

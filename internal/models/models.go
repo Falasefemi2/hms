@@ -50,3 +50,16 @@ type Nurse struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type Patient struct {
+	PatientID             uuid.UUID
+	UserID                uuid.UUID
+	DateOfBirth           time.Time
+	Gender                string
+	BloodGroup            string
+	EmergencyContactName  string
+	EmergencyContactPhone string
+	MedicalHistory        string
+	CreatedAt             time.Time
+	UpdatedAt             time.Time
+}
