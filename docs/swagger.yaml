@@ -76,6 +76,46 @@ definitions:
       updated_at:
         type: string
     type: object
+  dto.DoctorResponse:
+    properties:
+      consultation_fee:
+        type: number
+      created_at:
+        type: string
+      department_id:
+        type: string
+      doctor_id:
+        type: string
+      is_available:
+        type: boolean
+      license_number:
+        type: string
+      specialization:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.DoctorSignUpRequest:
+    properties:
+      consultation_fee:
+        type: number
+      department_id:
+        type: string
+      license_number:
+        type: string
+      specialization:
+        type: string
+      user_id:
+        type: string
+    required:
+    - consultation_fee
+    - department_id
+    - license_number
+    - specialization
+    - user_id
+    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -383,6 +423,46 @@ paths:
       summary: Update a department
       tags:
       - departments
+  /admin/doctors:
+    post:
+      consumes:
+      - application/json
+      description: Create a new doctor. Requires valid JWT token with ADMIN role
+      parameters:
+      - description: Doctor creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DoctorSignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Doctor created successfully
+          schema:
+            $ref: '#/definitions/dto.DoctorResponse'
+        "400":
+          description: Validation error - invalid input or invalid role
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict - doctor already exists for this user
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new doctor
+      tags:
+      - Doctor Management
   /admin/users:
     get:
       consumes:

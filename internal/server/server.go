@@ -38,12 +38,15 @@ func (s *Server) Start(port string) error {
 
 	userRepo := repository.NewUserRepository(s.db.Pool())
 	deptRepo := repository.NewDepartmentRepository(s.db.Pool())
+	doctorRepo := repository.NewDoctorRepository(s.db.Pool())
 
 	userService := service.NewUserService(userRepo)
 	deptService := service.NewDepartmentService(deptRepo)
+	doctorService := service.NewDoctorService(doctorRepo, userRepo)
 
 	userHandler := handlers.NewUserHandler(userService)
 	deptHandler := handlers.NewDeptHandler(deptService)
+	doctorHandler := handlers.NewDoctorHandler(doctorService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -72,6 +75,10 @@ func (s *Server) Start(port string) error {
 			r.Get("/{id}", deptHandler.GetDepartment)
 			r.Put("/{id}", deptHandler.UpdateDepartment)
 			r.Delete("/{id}", deptHandler.DeleteDepartment)
+		})
+		
+		r.Route("/doctors", func(r chi.Router) {
+			r.Post("/", doctorHandler.CreateDoctor)
 		})
 	})
 
