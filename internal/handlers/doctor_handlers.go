@@ -58,7 +58,7 @@ func (h *DoctorHandler) CreateDoctor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	doctor := &models.Doctor{
-		DocotrID:        uuid.New(), // Generate UUID here
+		DoctorID:        uuid.New(), // Generate UUID here
 		UserID:          userID,
 		Specialization:  strings.TrimSpace(req.Specialization),
 		LicenseNumber:   strings.TrimSpace(req.LicenseNumber),
@@ -78,7 +78,7 @@ func (h *DoctorHandler) CreateDoctor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := &dto.DoctorResponse{
-		DoctorID:        createdDoctor.DocotrID.String(),
+		DoctorID:        createdDoctor.DoctorID.String(),
 		UserID:          createdDoctor.UserID.String(),
 		Specialization:  createdDoctor.Specialization,
 		LicenseNumber:   createdDoctor.LicenseNumber,

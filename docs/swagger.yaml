@@ -34,6 +34,38 @@ definitions:
     - role
     - username
     type: object
+  dto.AvailabilityRequest:
+    properties:
+      day_of_week:
+        type: string
+      doctor_id:
+        type: string
+      end_time:
+        type: string
+      max_appointments:
+        type: integer
+      start_time:
+        type: string
+    type: object
+  dto.AvailabilityResponse:
+    properties:
+      availability_id:
+        type: string
+      created_at:
+        type: string
+      day_of_week:
+        type: string
+      doctor_id:
+        type: string
+      end_time:
+        type: string
+      max_appointments:
+        type: integer
+      start_time:
+        type: string
+      updated_at:
+        type: string
+    type: object
   dto.CreateDepartmentRequest:
     properties:
       description:
@@ -536,6 +568,43 @@ paths:
       summary: Create a new doctor
       tags:
       - Doctor Management
+  /admin/doctors/availability:
+    post:
+      consumes:
+      - application/json
+      description: Create doctor availability slot. Requires valid JWT token with
+        ADMIN role
+      parameters:
+      - description: Availability details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AvailabilityRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Availability created successfully
+          schema:
+            $ref: '#/definitions/dto.AvailabilityResponse'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create doctor availability
+      tags:
+      - Doctor Availability
   /admin/nurses:
     post:
       consumes:
