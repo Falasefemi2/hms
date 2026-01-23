@@ -41,18 +41,21 @@ func (s *Server) Start(port string) error {
 	doctorRepo := repository.NewDoctorRepository(s.db.Pool())
 	nurseRepo := repository.NewNurseRepository(s.db.Pool())
 	patientRepo := repository.NewPatientRepository(s.db.Pool())
+	availabilityRepo := repository.NewAvailabilityRepository(s.db.Pool())
 
 	userService := service.NewUserService(userRepo)
 	deptService := service.NewDepartmentService(deptRepo)
 	doctorService := service.NewDoctorService(doctorRepo, userRepo)
 	nurseService := service.NewNurseService(nurseRepo, userRepo)
 	patientService := service.NewPatientService(patientRepo, userRepo)
+	availabilityService := service.NewAvailabilityService(availabilityRepo, doctorRepo)
 
 	userHandler := handlers.NewUserHandler(userService)
 	deptHandler := handlers.NewDeptHandler(deptService)
 	doctorHandler := handlers.NewDoctorHandler(doctorService)
 	nurseHandler := handlers.NewNurseHandler(nurseService)
 	patientHandler := handlers.NewPatientHandlers(patientService)
+	availabilityHandler := handlers.NewAvailabilityHandlers(availabilityService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -68,13 +71,11 @@ func (s *Server) Start(port string) error {
 	r.Route("/admin", func(r chi.Router) {
 		r.Use(middleware.JWTAuth)
 		r.Use(middleware.AdminOnly)
-
 		r.Route("/users", func(r chi.Router) {
 			r.Post("/", userHandler.CreateUser)
 			r.Get("/", userHandler.ListUsers)
 			r.Get("/{id}", userHandler.GetUser)
 		})
-
 		r.Route("/departments", func(r chi.Router) {
 			r.Post("/", deptHandler.CreateDepartment)
 			r.Get("/", deptHandler.GetAllDepartments)
@@ -82,11 +83,12 @@ func (s *Server) Start(port string) error {
 			r.Put("/{id}", deptHandler.UpdateDepartment)
 			r.Delete("/{id}", deptHandler.DeleteDepartment)
 		})
-
 		r.Route("/doctors", func(r chi.Router) {
 			r.Post("/", doctorHandler.CreateDoctor)
+			r.Route("/availability", func(r chi.Router) {
+				r.Post("/", availabilityHandler.CreateAvailability)
+			})
 		})
-
 		r.Route("/nurses", func(r chi.Router) {
 			r.Post("/", nurseHandler.CreateNurse)
 		})

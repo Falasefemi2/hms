@@ -30,7 +30,7 @@ type Department struct {
 }
 
 type Doctor struct {
-	DocotrID        uuid.UUID
+	DoctorID        uuid.UUID
 	UserID          uuid.UUID
 	Specialization  string
 	LicenseNumber   string
@@ -62,4 +62,15 @@ type Patient struct {
 	MedicalHistory        string
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
+}
+
+type Availability struct {
+	AvailabilityID uuid.UUID
+	DoctorID       uuid.UUID
+	DayOfWeek      string
+	StartTime      string
+	EndTime        string
+	MaxAppointment int
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
