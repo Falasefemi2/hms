@@ -467,6 +467,280 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/hospital-configs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all hospital configurations. Requires valid JWT token with ADMIN role",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hospital Configuration"
+                ],
+                "summary": "Get all hospital configurations",
+                "responses": {
+                    "200": {
+                        "description": "Hospital configurations retrieved successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.HospitalConfigResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new hospital configuration. Requires valid JWT token with ADMIN role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hospital Configuration"
+                ],
+                "summary": "Create a new hospital configuration",
+                "parameters": [
+                    {
+                        "description": "Hospital configuration details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateHospitalConfigRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Hospital configuration created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HospitalConfigResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/hospital-configs/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a specific hospital configuration. Requires valid JWT token with ADMIN role",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hospital Configuration"
+                ],
+                "summary": "Get a hospital configuration by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hospital configuration ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hospital configuration retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HospitalConfigResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Hospital configuration not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing hospital configuration. Requires valid JWT token with ADMIN role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hospital Configuration"
+                ],
+                "summary": "Update a hospital configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hospital configuration ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated hospital configuration details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateHospitalConfigRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hospital configuration updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HospitalConfigResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error - invalid input or ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Hospital configuration not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing hospital configuration. Requires valid JWT token with ADMIN role",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hospital Configuration"
+                ],
+                "summary": "Delete a hospital configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hospital configuration ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Hospital configuration deleted successfully"
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - missing or invalid JWT token",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - admin role required",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Hospital configuration not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/nurses": {
             "post": {
                 "security": [
@@ -1009,6 +1283,35 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateHospitalConfigRequest": {
+            "type": "object",
+            "required": [
+                "appointment_duration_minutes",
+                "max_same_day_cancellation_hours",
+                "working_hours_end",
+                "working_hours_start"
+            ],
+            "properties": {
+                "appointment_duration_minutes": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "enable_patient_self_registration": {
+                    "description": "pointer to distinguish false from unset",
+                    "type": "boolean"
+                },
+                "max_same_day_cancellation_hours": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "working_hours_end": {
+                    "type": "string"
+                },
+                "working_hours_start": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.DepartmentListResponse": {
             "type": "object",
             "properties": {
@@ -1121,6 +1424,35 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HospitalConfigResponse": {
+            "type": "object",
+            "properties": {
+                "appointment_duration_minutes": {
+                    "type": "integer"
+                },
+                "config_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "enable_patient_self_registration": {
+                    "type": "boolean"
+                },
+                "max_same_day_cancellation_hours": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "working_hours_end": {
+                    "type": "string"
+                },
+                "working_hours_start": {
                     "type": "string"
                 }
             }
@@ -1314,6 +1646,38 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                }
+            }
+        },
+        "dto.UpdateHospitalConfigRequest": {
+            "type": "object",
+            "required": [
+                "appointment_duration_minutes",
+                "config_id",
+                "max_same_day_cancellation_hours",
+                "working_hours_end",
+                "working_hours_start"
+            ],
+            "properties": {
+                "appointment_duration_minutes": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "config_id": {
+                    "type": "string"
+                },
+                "enable_patient_self_registration": {
+                    "type": "boolean"
+                },
+                "max_same_day_cancellation_hours": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "working_hours_end": {
+                    "type": "string"
+                },
+                "working_hours_start": {
+                    "type": "string"
                 }
             }
         },
