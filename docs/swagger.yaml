@@ -78,6 +78,27 @@ definitions:
     required:
     - name
     type: object
+  dto.CreateHospitalConfigRequest:
+    properties:
+      appointment_duration_minutes:
+        minimum: 1
+        type: integer
+      enable_patient_self_registration:
+        description: pointer to distinguish false from unset
+        type: boolean
+      max_same_day_cancellation_hours:
+        minimum: 0
+        type: integer
+      working_hours_end:
+        type: string
+      working_hours_start:
+        type: string
+    required:
+    - appointment_duration_minutes
+    - max_same_day_cancellation_hours
+    - working_hours_end
+    - working_hours_start
+    type: object
   dto.DepartmentListResponse:
     properties:
       data:
@@ -153,6 +174,25 @@ definitions:
       code:
         type: string
       error:
+        type: string
+    type: object
+  dto.HospitalConfigResponse:
+    properties:
+      appointment_duration_minutes:
+        type: integer
+      config_id:
+        type: string
+      created_at:
+        type: string
+      enable_patient_self_registration:
+        type: boolean
+      max_same_day_cancellation_hours:
+        type: integer
+      updated_at:
+        type: string
+      working_hours_end:
+        type: string
+      working_hours_start:
         type: string
     type: object
   dto.LoginRequest:
@@ -287,6 +327,29 @@ definitions:
         maxLength: 255
         minLength: 1
         type: string
+    type: object
+  dto.UpdateHospitalConfigRequest:
+    properties:
+      appointment_duration_minutes:
+        minimum: 1
+        type: integer
+      config_id:
+        type: string
+      enable_patient_self_registration:
+        type: boolean
+      max_same_day_cancellation_hours:
+        minimum: 0
+        type: integer
+      working_hours_end:
+        type: string
+      working_hours_start:
+        type: string
+    required:
+    - appointment_duration_minutes
+    - config_id
+    - max_same_day_cancellation_hours
+    - working_hours_end
+    - working_hours_start
     type: object
   dto.UserResponse:
     properties:
@@ -605,6 +668,186 @@ paths:
       summary: Create doctor availability
       tags:
       - Doctor Availability
+  /admin/hospital-configs:
+    get:
+      description: Get all hospital configurations. Requires valid JWT token with
+        ADMIN role
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital configurations retrieved successfully
+          schema:
+            items:
+              $ref: '#/definitions/dto.HospitalConfigResponse'
+            type: array
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all hospital configurations
+      tags:
+      - Hospital Configuration
+    post:
+      consumes:
+      - application/json
+      description: Create a new hospital configuration. Requires valid JWT token with
+        ADMIN role
+      parameters:
+      - description: Hospital configuration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateHospitalConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Hospital configuration created successfully
+          schema:
+            $ref: '#/definitions/dto.HospitalConfigResponse'
+        "400":
+          description: Validation error - invalid input
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new hospital configuration
+      tags:
+      - Hospital Configuration
+  /admin/hospital-configs/{id}:
+    delete:
+      description: Delete an existing hospital configuration. Requires valid JWT token
+        with ADMIN role
+      parameters:
+      - description: Hospital configuration ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Hospital configuration deleted successfully
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Hospital configuration not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a hospital configuration
+      tags:
+      - Hospital Configuration
+    get:
+      description: Get a specific hospital configuration. Requires valid JWT token
+        with ADMIN role
+      parameters:
+      - description: Hospital configuration ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital configuration retrieved successfully
+          schema:
+            $ref: '#/definitions/dto.HospitalConfigResponse'
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Hospital configuration not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a hospital configuration by ID
+      tags:
+      - Hospital Configuration
+    put:
+      consumes:
+      - application/json
+      description: Update an existing hospital configuration. Requires valid JWT token
+        with ADMIN role
+      parameters:
+      - description: Hospital configuration ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated hospital configuration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateHospitalConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hospital configuration updated successfully
+          schema:
+            $ref: '#/definitions/dto.HospitalConfigResponse'
+        "400":
+          description: Validation error - invalid input or ID
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized - missing or invalid JWT token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "403":
+          description: Forbidden - admin role required
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Hospital configuration not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a hospital configuration
+      tags:
+      - Hospital Configuration
   /admin/nurses:
     post:
       consumes:

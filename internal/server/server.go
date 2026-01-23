@@ -42,6 +42,7 @@ func (s *Server) Start(port string) error {
 	nurseRepo := repository.NewNurseRepository(s.db.Pool())
 	patientRepo := repository.NewPatientRepository(s.db.Pool())
 	availabilityRepo := repository.NewAvailabilityRepository(s.db.Pool())
+	hospitalConfigRepo := repository.NewHospitalConfigRepository(s.db.Pool())
 
 	userService := service.NewUserService(userRepo)
 	deptService := service.NewDepartmentService(deptRepo)
@@ -49,6 +50,7 @@ func (s *Server) Start(port string) error {
 	nurseService := service.NewNurseService(nurseRepo, userRepo)
 	patientService := service.NewPatientService(patientRepo, userRepo)
 	availabilityService := service.NewAvailabilityService(availabilityRepo, doctorRepo)
+	hospitalConfigService := service.NewHospitalConfigService(hospitalConfigRepo)
 
 	userHandler := handlers.NewUserHandler(userService)
 	deptHandler := handlers.NewDeptHandler(deptService)
@@ -56,6 +58,7 @@ func (s *Server) Start(port string) error {
 	nurseHandler := handlers.NewNurseHandler(nurseService)
 	patientHandler := handlers.NewPatientHandlers(patientService)
 	availabilityHandler := handlers.NewAvailabilityHandlers(availabilityService)
+	hospitalConfigHandler := handlers.NewHospitalConfigHandler(hospitalConfigService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -91,6 +94,13 @@ func (s *Server) Start(port string) error {
 		})
 		r.Route("/nurses", func(r chi.Router) {
 			r.Post("/", nurseHandler.CreateNurse)
+		})
+		r.Route("/hospital-configs", func(r chi.Router) {
+			r.Post("/", hospitalConfigHandler.CreateHospitalConfig)
+			r.Get("/", hospitalConfigHandler.GetAllHospitalConfigs)
+			r.Get("/{id}", hospitalConfigHandler.GetHospitalConfig)
+			r.Put("/{id}", hospitalConfigHandler.UpdateHospitalConfig)
+			r.Delete("/{id}", hospitalConfigHandler.DeleteHospitalConfig)
 		})
 	})
 

@@ -74,3 +74,14 @@ type Availability struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
+
+type HospitalConfig struct {
+	ConfigID                      uuid.UUID
+	WorkingHoursStart             string
+	WorkingHoursEnd               string
+	AppointmentDurationMinutes    int
+	MaxSameDayCancellationHours   int
+	EnablePatientSelfRegistration bool
+	CreatedAt                     time.Time
+	UpdatedAt                     time.Time
+}
