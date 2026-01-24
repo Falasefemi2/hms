@@ -33,8 +33,8 @@ func (s *AppointmentService) CreateAppointment(ctx context.Context, appointment 
 	}
 
 	// Validate doctor exists
-	_, err = s.doctorRepo.GetDoctorID(ctx, appointment.DoctorID)
-	if err != nil {
+	_, errDoc := s.doctorRepo.GetDoctorID(ctx, appointment.DoctorID)
+	if errDoc != nil {
 		return nil, errors.New("doctor not found")
 	}
 
