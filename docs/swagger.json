@@ -989,6 +989,162 @@
                 }
             }
         },
+        "/appointments": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new appointment. Requires valid JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Appointment Management"
+                ],
+                "summary": "Create a new appointment",
+                "parameters": [
+                    {
+                        "description": "Appointment creation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateAppointmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Appointment created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AppointmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/appointments/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get appointment details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Appointment Management"
+                ],
+                "summary": "Get appointment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Appointment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Appointment details",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AppointmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Appointment not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update appointment details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Appointment Management"
+                ],
+                "summary": "Update an appointment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Appointment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Appointment update details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateAppointmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Appointment updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AppointmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Appointment not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Authenticate a user and receive a JWT token.",
@@ -1074,6 +1230,162 @@
                     },
                     "409": {
                         "description": "Conflict - email or username already registered",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/consultations": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new consultation for a completed appointment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Consultation Management"
+                ],
+                "summary": "Create a new consultation",
+                "parameters": [
+                    {
+                        "description": "Consultation creation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateConsultationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Consultation created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ConsultationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/consultations/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get consultation details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Consultation Management"
+                ],
+                "summary": "Get consultation by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Consultation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consultation details",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ConsultationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Consultation not found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update consultation details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Consultation Management"
+                ],
+                "summary": "Update a consultation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Consultation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Consultation update details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateConsultationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consultation updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ConsultationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Consultation not found",
                         "schema": {
                             "$ref": "#/definitions/dto.ErrorResponse"
                         }
@@ -1215,6 +1527,38 @@
                 }
             }
         },
+        "dto.AppointmentResponse": {
+            "type": "object",
+            "properties": {
+                "appointment_date": {
+                    "type": "string"
+                },
+                "appointment_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "doctor_id": {
+                    "type": "string"
+                },
+                "duration_minutes": {
+                    "type": "integer"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "patient_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.AvailabilityRequest": {
             "type": "object",
             "properties": {
@@ -1260,6 +1604,88 @@
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ConsultationResponse": {
+            "type": "object",
+            "properties": {
+                "appointment_id": {
+                    "type": "string"
+                },
+                "consultation_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "diagnosis": {
+                    "type": "string"
+                },
+                "doctor_id": {
+                    "type": "string"
+                },
+                "is_editable": {
+                    "type": "boolean"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "patient_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateAppointmentRequest": {
+            "type": "object",
+            "required": [
+                "appointment_date",
+                "doctor_id",
+                "duration_minutes",
+                "patient_id"
+            ],
+            "properties": {
+                "appointment_date": {
+                    "type": "string"
+                },
+                "doctor_id": {
+                    "type": "string"
+                },
+                "duration_minutes": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "patient_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateConsultationRequest": {
+            "type": "object",
+            "required": [
+                "appointment_id",
+                "diagnosis",
+                "doctor_id",
+                "patient_id"
+            ],
+            "properties": {
+                "appointment_id": {
+                    "type": "string"
+                },
+                "diagnosis": {
+                    "type": "string"
+                },
+                "doctor_id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "patient_id": {
                     "type": "string"
                 }
             }
@@ -1627,6 +2053,49 @@
                     "maxLength": 255,
                     "minLength": 3,
                     "example": "john_doe"
+                }
+            }
+        },
+        "dto.UpdateAppointmentRequest": {
+            "type": "object",
+            "required": [
+                "appointment_date",
+                "duration_minutes",
+                "status"
+            ],
+            "properties": {
+                "appointment_date": {
+                    "type": "string"
+                },
+                "duration_minutes": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "PENDING",
+                        "CONFIRMED",
+                        "COMPLETED",
+                        "CANCELLED"
+                    ]
+                }
+            }
+        },
+        "dto.UpdateConsultationRequest": {
+            "type": "object",
+            "required": [
+                "diagnosis"
+            ],
+            "properties": {
+                "diagnosis": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
                 }
             }
         },

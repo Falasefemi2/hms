@@ -43,6 +43,8 @@ func (s *Server) Start(port string) error {
 	patientRepo := repository.NewPatientRepository(s.db.Pool())
 	availabilityRepo := repository.NewAvailabilityRepository(s.db.Pool())
 	hospitalConfigRepo := repository.NewHospitalConfigRepository(s.db.Pool())
+	appointmentRepo := repository.NewAppointmentRepository(s.db.Pool())
+	consultationRepo := repository.NewConsultationRepository(s.db.Pool())
 
 	userService := service.NewUserService(userRepo)
 	deptService := service.NewDepartmentService(deptRepo)
@@ -51,6 +53,8 @@ func (s *Server) Start(port string) error {
 	patientService := service.NewPatientService(patientRepo, userRepo)
 	availabilityService := service.NewAvailabilityService(availabilityRepo, doctorRepo)
 	hospitalConfigService := service.NewHospitalConfigService(hospitalConfigRepo)
+	appointmentService := service.NewAppointmentService(appointmentRepo, patientRepo, doctorRepo)
+	consultationService := service.NewConsultationService(consultationRepo, appointmentRepo, patientRepo, doctorRepo)
 
 	userHandler := handlers.NewUserHandler(userService)
 	deptHandler := handlers.NewDeptHandler(deptService)
@@ -59,6 +63,8 @@ func (s *Server) Start(port string) error {
 	patientHandler := handlers.NewPatientHandlers(patientService)
 	availabilityHandler := handlers.NewAvailabilityHandlers(availabilityService)
 	hospitalConfigHandler := handlers.NewHospitalConfigHandler(hospitalConfigService)
+	appointmentHandler := handlers.NewAppointmentHandler(appointmentService)
+	consultationHandler := handlers.NewConsultationHandler(consultationService)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Welcome to the HMS API")
@@ -110,6 +116,20 @@ func (s *Server) Start(port string) error {
 		r.Route("/patientprofile", func(r chi.Router) {
 			r.Post("/", patientHandler.PatientProfile)
 		})
+	})
+
+	r.Route("/appointments", func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Post("/", appointmentHandler.CreateAppointment)
+		r.Get("/{id}", appointmentHandler.GetAppointment)
+		r.Put("/{id}", appointmentHandler.UpdateAppointment)
+	})
+
+	r.Route("/consultations", func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Post("/", consultationHandler.CreateConsultation)
+		r.Get("/{id}", consultationHandler.GetConsultation)
+		r.Put("/{id}", consultationHandler.UpdateConsultation)
 	})
 
 	s.server = &http.Server{

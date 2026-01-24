@@ -82,3 +82,38 @@ func (p *PatientRepository) GetByUserID(ctx context.Context, userID uuid.UUID) (
 
 	return &patient, nil
 }
+
+func (p *PatientRepository) GetByPatientID(ctx context.Context, patientID uuid.UUID) (*models.Patient, error) {
+	if _, ok := ctx.Deadline(); !ok {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, 10*time.Second)
+		defer cancel()
+	}
+
+	query := `
+		SELECT patient_id, user_id, date_of_birth, gender, blood_group,
+		       emergency_contact_name, emergency_contact_phone,
+		       medical_history, created_at, updated_at
+		FROM patients
+		WHERE patient_id = $1
+	`
+
+	var patient models.Patient
+	err := p.pool.QueryRow(ctx, query, patientID).Scan(
+		&patient.PatientID,
+		&patient.UserID,
+		&patient.DateOfBirth,
+		&patient.Gender,
+		&patient.BloodGroup,
+		&patient.EmergencyContactName,
+		&patient.EmergencyContactPhone,
+		&patient.MedicalHistory,
+		&patient.CreatedAt,
+		&patient.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &patient, nil
+}
