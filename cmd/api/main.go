@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/falasefemi2/hms/docs"
+	_ "github.com/falasefemi2/hms/docs"
 	"github.com/falasefemi2/hms/internal/config"
 	"github.com/falasefemi2/hms/internal/database"
 	"github.com/falasefemi2/hms/internal/server"
