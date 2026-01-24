@@ -32,7 +32,11 @@ import (
 func main() {
 	// Load config
 	cfg := config.LoadConfig()
-	docs.SwaggerInfo.Host = "hms-1-fjlc.onrender.com"
+	if cfg.Environment == "development" {
+		docs.SwaggerInfo.Host = "localhost:8080"
+	} else {
+		docs.SwaggerInfo.Host = "hms-1-fjlc.onrender.com"
+	}
 	log.Println("Configuration loaded")
 
 	if err := cfg.Validate(); err != nil {
