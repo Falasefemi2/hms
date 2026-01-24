@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	_ "github.com/falasefemi2/hms/docs"
+	docs "github.com/falasefemi2/hms/docs"
 	"github.com/falasefemi2/hms/internal/config"
 	"github.com/falasefemi2/hms/internal/database"
 	"github.com/falasefemi2/hms/internal/server"
@@ -32,6 +32,11 @@ import (
 func main() {
 	// Load config
 	cfg := config.LoadConfig()
+	if cfg.Environment == "development" {
+		docs.SwaggerInfo.Host = "localhost:8080"
+	} else {
+		docs.SwaggerInfo.Host = "hms-1-fjlc.onrender.com"
+	}
 	log.Println("Configuration loaded")
 
 	if err := cfg.Validate(); err != nil {
