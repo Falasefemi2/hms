@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/falasefemi2/hms/docs"
 	"github.com/falasefemi2/hms/internal/config"
 	"github.com/falasefemi2/hms/internal/database"
 	"github.com/falasefemi2/hms/internal/server"
@@ -22,7 +23,6 @@ import (
 // @contact.email support@hms.example.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8080
 // @BasePath /
 // @schemes http https
 // @securityDefinitions.apiKey BearerAuth
