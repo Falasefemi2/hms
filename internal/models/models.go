@@ -85,3 +85,26 @@ type HospitalConfig struct {
 	CreatedAt                     time.Time
 	UpdatedAt                     time.Time
 }
+
+type Appointment struct {
+	AppointmentID   uuid.UUID
+	PatientID       uuid.UUID
+	DoctorID        uuid.UUID
+	AppointmentDate time.Time
+	DurationMinutes int
+	Status          string
+	Notes           string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+}
+
+type Consultation struct {
+	ConsultationID uuid.UUID
+	AppointmentID  uuid.UUID
+	PatientID      uuid.UUID
+	DoctorID       uuid.UUID
+	Diagnosis      string
+	Notes          string
+	CreatedAt      time.Time
+	IsEditable     bool
+}
