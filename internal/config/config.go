@@ -61,8 +61,8 @@ func LoadConfig() *Config {
 		DBSSLMode:   getEnv("DB_SSL_MODE", "disable"),
 
 		// Server configuration
-		ServerPort:  getEnvAsInt("SERVER_PORT", 8080),
-		ServerHost:  getEnv("SERVER_HOST", "localhost"),
+		ServerPort:  getEnvAsInt("PORT", getEnvAsInt("SERVER_PORT", 8080)),
+		ServerHost:  getEnv("SERVER_HOST", "0.0.0.0"),
 		Environment: getEnv("ENVIRONMENT", "development"),
 
 		// JWT configuration
